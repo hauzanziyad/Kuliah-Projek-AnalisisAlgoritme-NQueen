@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>N-Queen Algorithm Tester & Visualizer</title>
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+  
+  <style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+      main > :first-child { margin-top: 0 !important; }
+      main > :last-child { margin-bottom: 0 !important; }
+    }
+    ::-webkit-scrollbar { display: none; }
+  </style>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface-container-high": "#e8e3da",
+            "secondary": "#e63b2e",
+            "primary-fixed-dim": "#e6b800",
+            "background": "#f5f0e8",
+            "outline-variant": "#d0cbc3",
+            "primary-fixed": "#ffcc00",
+            "surface-container-highest": "#e2ddd4",
+            "secondary-fixed-dim": "#ffb3ab",
+            "inverse-primary": "#f5f0e8",
+            "on-primary-container": "#1a1a1a",
+            "surface-tint": "#1a1a1a",
+            "surface-dim": "#d6d1c9",
+            "on-secondary-container": "#1a1a1a",
+            "inverse-on-surface": "#f5f0e8",
+            "secondary-fixed": "#ffdad6",
+            "inverse-surface": "#1a1a1a",
+            "on-error": "#ffffff",
+            "error-container": "#ffdad6",
+            "surface-variant": "#e8e3da",
+            "on-background": "#1a1a1a",
+            "tertiary-fixed": "#d6e3ff",
+            "on-tertiary-fixed": "#1a1a1a",
+            "on-primary-fixed-variant": "#1a1a1a",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-container": "#1a1a1a",
+            "error": "#cc0000",
+            "on-primary-fixed": "#1a1a1a",
+            "on-error-container": "#93000a",
+            "surface-container": "#eee9e0",
+            "surface-bright": "#faf7f2",
+            "surface": "#f5f0e8",
+            "surface-container-low": "#f2ede5",
+            "on-secondary-fixed": "#1a1a1a",
+            "on-surface-variant": "#4a4a4a",
+            "secondary-container": "#ffdad6",
+            "tertiary-container": "#d6e3ff",
+            "outline": "#1a1a1a",
+            "primary-container": "#ffcc00",
+            "on-secondary": "#1a1a1a",
+            "on-surface": "#1a1a1a",
+            "tertiary": "#0055ff",
+            "on-tertiary-fixed-variant": "#1a1a1a",
+            "on-secondary-fixed-variant": "#1a1a1a",
+            "on-tertiary": "#ffffff",
+            "primary": "#1a1a1a",
+            "on-primary": "#ffffff",
+            "tertiary-fixed-dim": "#a8c6ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          fontFamily: {
+            "headline": ["Space Grotesk"],
+            "display": ["Space Grotesk"],
+            "body": ["Inter"],
+            "label": ["Space Grotesk"]
+          }
+        }
+      }
+    };
+  </script>
+</head>
+<body class="bg-background font-body text-on-surface min-h-screen">
+  <!-- Left Bauhaus Sidebar -->
+  <aside class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest border-r-2 border-outline z-50 flex flex-col justify-between">
+    <div class="flex flex-col">
+      <div class="h-16 px-4 flex items-center border-b-2 border-outline bg-primary">
+        <span class="font-headline font-bold text-sm tracking-wider uppercase text-on-primary flex items-center gap-2">
+          <span class="w-3 h-3 bg-primary-fixed border border-on-primary inline-block"></span>
+          N-QUEEN // DEV
+        </span>
+      </div>
+      <div class="p-3 bg-surface-container-low border-b-2 border-outline">
+        <div class="flex items-center justify-between text-xs font-label uppercase font-bold text-on-surface-variant">
+          <span>Engine Status</span>
+          <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-surface-container-highest border border-outline text-[11px] text-on-surface">
+            <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>READY
+          </span>
+        </div>
+        <div class="mt-2 text-[11px] font-mono text-on-surface-variant truncate">Target: Modular Web Worker</div>
+      </div>
+      <nav class="p-3 space-y-2">
+        <a aria-current="page" class="flex items-center gap-3 px-3 py-2.5 uppercase tracking-wider transition-none bg-primary-container text-on-primary-container font-bold border-2 border-outline shadow-[2px_2px_0px_#1a1a1a]" data-path="visualizer-&-playground" href="#">
+          <span class="material-symbols-outlined text-[18px]">grid_view</span>
+          Visualizer &amp; Playground
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 text-xs font-label uppercase tracking-wider text-on-surface-variant hover:bg-surface-container hover:text-on-surface border border-transparent transition-none" data-path="algorithm-comparison" href="#">
+          <span class="material-symbols-outlined text-[18px]">compare_arrows</span>
+          Algorithm Comparison
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 text-xs font-label uppercase tracking-wider text-on-surface-variant hover:bg-surface-container hover:text-on-surface border border-transparent transition-none" data-path="benchmark-runner" href="#">
+          <span class="material-symbols-outlined text-[18px]">speed</span>
+          Benchmark Runner
+        </a>
+        <a class="flex items-center gap-3 px-3 py-2.5 text-xs font-label uppercase tracking-wider text-on-surface-variant hover:bg-surface-container hover:text-on-surface border border-transparent transition-none" data-path="documentation-/-architecture" href="#">
+          <span class="material-symbols-outlined text-[18px]">terminal</span>
+          Docs &amp; Architecture
+        </a>
+      </nav>
+    </div>
+    <div class="p-3 border-t-2 border-outline bg-surface-container-low">
+      <div class="text-[10px] font-mono uppercase text-on-surface-variant leading-tight">
+        RUNTIME: CHROMIUM / V8<br/>
+        THREADS: WEB WORKER ACTIVE
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="pl-64 flex flex-col min-h-screen">
+    <!-- Header -->
+    <header class="fixed top-0 left-64 right-0 h-16 bg-surface-container-lowest border-b-2 border-outline z-40 flex items-center justify-between px-6">
+      <div class="flex items-center gap-4">
+        <div class="font-headline font-bold text-base tracking-tight uppercase text-on-surface flex items-center gap-2">
+          <span>N-QUEEN // VISUALIZER &amp; TESTER</span>
+        </div>
+        <span class="px-2 py-0.5 bg-surface-container text-on-surface font-mono text-xs border border-outline">v1.0.0-dev (Wasm/Worker Ready)</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-2 border border-outline px-2.5 py-1 bg-surface-container-low">
+          <span class="text-[11px] font-label uppercase text-on-surface-variant font-bold">MODE:</span>
+          <span class="text-[11px] font-mono font-bold text-tertiary">ALL_SOLUTIONS</span>
+        </div>
+        <button id="theme-toggle-btn" class="flex items-center gap-2 border-2 border-outline px-2.5 py-1 bg-surface-container-low hover:bg-primary hover:text-on-primary transition-none shadow-[2px_2px_0px_#1a1a1a] cursor-pointer">
+          <span class="material-symbols-outlined text-[16px]">palette</span>
+          <span id="theme-label" class="text-[11px] font-mono font-bold text-on-surface">BAUHAUS_LIGHT</span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center">
+          <span class="material-symbols-outlined text-on-primary text-[18px]">person</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-1 pt-20 bg-background w-full px-8 pb-10">
+      
+      <!-- TAB 1: VISUALIZER & PLAYGROUND -->
+      <div id="view-visualizer" class="flex flex-col w-full">
+        <!-- Top Global Metabar -->
+        <div class="flex flex-wrap items-center justify-between gap-4 pb-4 border-b-2 border-outline mb-6">
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 bg-primary text-on-primary font-mono text-xs font-bold uppercase tracking-wider">WORKSPACE</span>
+            <h1 class="text-xl md:text-2xl font-headline font-bold uppercase tracking-tight text-on-surface">Interactive Laboratory &amp; State Visualizer</h1>
+            <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-surface-container-highest border border-outline text-[11px] font-mono font-bold">
+              <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>SYS_OK: THREAD #0
+            </span>
+          </div>
+          <!-- Quick State Stats / Presets -->
+          <div class="flex items-center gap-2 font-mono text-xs">
+            <div class="bg-surface-container-lowest border border-outline px-3 py-1 flex items-center gap-2">
+              <span class="text-on-surface-variant uppercase text-[10px] font-bold">BOARD_CONFIG:</span>
+              <span class="font-bold text-on-surface" id="stat-board-config">N=8 (64 CELLS)</span>
+            </div>
+            <div class="bg-surface-container-lowest border border-outline px-3 py-1 flex items-center gap-2">
+              <span class="text-on-surface-variant uppercase text-[10px] font-bold">ACTIVE_OBSTACLES:</span>
+              <span class="font-bold text-secondary" id="stat-obstacles">0 HOLES, 0 WALLS</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Primary 3-Column Bauhaus Grid Layout -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+          
+          <!-- COLUMN 1: CONFIGURATION & PROBLEM SETTINGS -->
+          <div class="xl:col-span-3 space-y-5">
+            <!-- Card: Category Selector -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">rule</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Problem Mode</span>
+                </div>
+                <span class="text-[10px] font-mono bg-surface-container px-1.5 py-0.5 border border-outline font-bold">MODE_SELECT</span>
+              </div>
+              <div class="space-y-1.5" id="problem-mode-group">
+                <button class="mode-btn w-full text-left px-3 py-2 border-2 border-outline bg-primary-container text-on-primary-container font-label text-xs uppercase font-bold flex items-center justify-between shadow-[2px_2px_0px_#1a1a1a]" data-mode="normal">
+                  <span>Normal N-Queen</span>
+                  <span class="material-symbols-outlined text-[16px]">check_circle</span>
+                </button>
+                <button class="mode-btn w-full text-left px-3 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label text-xs uppercase font-bold flex items-center justify-between" data-mode="preplaced">
+                  <span>Pre-placed Queens</span>
+                  <span class="text-[10px] font-mono text-tertiary font-bold">LOCKED</span>
+                </button>
+                <button class="mode-btn w-full text-left px-3 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label text-xs uppercase font-bold flex items-center justify-between" data-mode="holes">
+                  <span>N-Queen w/ Holes</span>
+                  <span class="text-[10px] font-mono text-secondary font-bold">FORBIDDEN</span>
+                </button>
+                <button class="mode-btn w-full text-left px-3 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container text-on-surface font-label text-xs uppercase font-bold flex items-center justify-between" data-mode="walled">
+                  <span>N-Queen w/ Walls</span>
+                  <span class="text-[10px] font-mono text-on-surface font-bold">BARRIER</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card: Board Dimension Stepper -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">aspect_ratio</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Grid Size (N)</span>
+                </div>
+                <span class="px-2 py-0.5 bg-primary text-on-primary font-mono text-xs font-bold border border-outline" id="dimension-badge">8 × 8 Grid</span>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-mono text-on-surface-variant uppercase">Matrix: <span class="font-bold text-on-surface" id="cell-count-text">64 Cells</span></span>
+                  <span class="text-xs font-mono text-on-surface-variant">Min: 4 | Max: 12</span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <button id="btn-n-minus" class="w-8 h-8 flex items-center justify-center bg-surface-container-high border-2 border-outline hover:bg-primary hover:text-on-primary font-bold text-sm shadow-[2px_2px_0px_#1a1a1a] active:translate-x-0.5 active:translate-y-0.5">-</button>
+                  <input class="w-full accent-primary cursor-pointer h-2 bg-surface-container-highest border border-outline" id="n-slider" max="12" min="4" step="1" type="range" value="8"/>
+                  <button id="btn-n-plus" class="w-8 h-8 flex items-center justify-center bg-surface-container-high border-2 border-outline hover:bg-primary hover:text-on-primary font-bold text-sm shadow-[2px_2px_0px_#1a1a1a] active:translate-x-0.5 active:translate-y-0.5">+</button>
+                </div>
+                <div class="grid grid-cols-5 gap-1 pt-1 font-mono text-[10px] text-center">
+                  <button class="n-preset-btn p-1 border border-outline hover:bg-surface-container-highest" data-n="4">N=4</button>
+                  <button class="n-preset-btn p-1 border border-outline hover:bg-surface-container-highest" data-n="6">N=6</button>
+                  <button class="n-preset-btn p-1 border-2 border-outline bg-primary-container font-bold" data-n="8">N=8</button>
+                  <button class="n-preset-btn p-1 border border-outline hover:bg-surface-container-highest" data-n="10">N=10</button>
+                  <button class="n-preset-btn p-1 border border-outline hover:bg-surface-container-highest" data-n="12">N=12</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card: Interactive Board Tool Mode -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">build</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Pointer Tool</span>
+                </div>
+                <span class="text-[10px] font-mono text-on-surface-variant font-bold">CLICK_ACTION</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2" id="tool-mode-group">
+                <button class="tool-btn flex items-center gap-2 px-2.5 py-2 border-2 border-outline bg-primary-container font-label text-xs uppercase font-bold shadow-[2px_2px_0px_#1a1a1a]" data-tool="queen">
+                  <span class="text-sm">♛</span>
+                  <span class="truncate">Queen</span>
+                </button>
+                <button class="tool-btn flex items-center gap-2 px-2.5 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container font-label text-xs uppercase font-bold" data-tool="locked">
+                  <span class="material-symbols-outlined text-[15px] text-tertiary">lock</span>
+                  <span class="truncate">Lock Q</span>
+                </button>
+                <button class="tool-btn flex items-center gap-2 px-2.5 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container font-label text-xs uppercase font-bold" data-tool="hole">
+                  <span class="w-3 h-3 bg-secondary/80 border border-outline inline-block"></span>
+                  <span class="truncate">Mark Hole</span>
+                </button>
+                <button class="tool-btn flex items-center gap-2 px-2.5 py-2 border border-outline bg-surface-container-lowest hover:bg-surface-container font-label text-xs uppercase font-bold" data-tool="wall">
+                  <span class="material-symbols-outlined text-[15px]">bricks</span>
+                  <span class="truncate">Wall (Ray)</span>
+                </button>
+                <button class="tool-btn col-span-2 flex items-center justify-center gap-2 px-2.5 py-1.5 border border-outline bg-surface-container-low hover:bg-surface-container font-label text-xs uppercase font-bold text-on-surface-variant" data-tool="clear">
+                  <span class="material-symbols-outlined text-[15px]">backspace</span>
+                  <span>Eraser / Clear Cell</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Card: Solver Algorithm Dropdown & Controls -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">memory</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Algorithm Engine</span>
+                </div>
+                <span class="px-1.5 py-0.5 bg-tertiary-fixed text-on-tertiary-fixed text-[10px] font-mono border border-outline font-bold">V8/OPT</span>
+              </div>
+              <div class="space-y-3">
+                <div class="relative">
+                  <select class="w-full bg-surface-container-lowest border-2 border-outline px-3 py-2 font-mono text-xs uppercase font-bold appearance-none cursor-pointer focus:bg-primary-container focus:outline-none" id="algorithm-select">
+                    <!-- Populated dynamically from SolverRegistry -->
+                  </select>
+                  <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-on-surface">
+                    <span class="material-symbols-outlined text-sm">expand_more</span>
+                  </div>
+                </div>
+                <!-- Action Buttons Bar -->
+                <div class="grid grid-cols-2 gap-2 pt-1">
+                  <button id="btn-randomize" class="px-2.5 py-2 bg-surface-container-high border-2 border-outline font-label text-xs uppercase font-bold hover:bg-primary hover:text-on-primary transition-none shadow-[2px_2px_0px_#1a1a1a] flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">casino</span>
+                    <span>Randomize</span>
+                  </button>
+                  <button id="btn-reset" class="px-2.5 py-2 bg-surface-container-high border-2 border-outline font-label text-xs uppercase font-bold hover:bg-secondary hover:text-on-primary transition-none shadow-[2px_2px_0px_#1a1a1a] flex items-center justify-center gap-1">
+                    <span class="material-symbols-outlined text-[14px]">restart_alt</span>
+                    <span>Reset All</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- COLUMN 2: CENTER BOARD & RAY PROJECTIONS -->
+          <div class="xl:col-span-5 space-y-4">
+            <!-- Coordinate & Status Banner -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-3 flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <div class="flex items-center gap-1.5 px-2 py-0.5 bg-primary text-on-primary font-mono text-xs font-bold uppercase">
+                  <span class="material-symbols-outlined text-[14px]">mouse</span>
+                  <span id="hover-coord">Cell: A8 [R:0, C:0]</span>
+                </div>
+                <span class="text-xs font-mono font-bold text-on-surface-variant" id="cell-state-preview">TYPE: EMPTY CELL</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs font-label uppercase font-bold">Placed:</span>
+                <span class="px-2 py-0.5 bg-primary-container border border-outline font-mono text-xs font-bold" id="queens-placed-badge">0 / 8 Queens</span>
+              </div>
+            </div>
+
+            <!-- Main Interactive Chessboard Frame -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[6px_6px_0px_#1a1a1a] p-4 flex flex-col items-center">
+              <div class="relative w-full max-w-[520px] aspect-square flex flex-col">
+                <!-- Column Labels Top (A..L) -->
+                <div id="board-col-labels" class="grid pb-1 text-center font-mono text-xs font-bold text-on-surface-variant tracking-wider">
+                  <!-- Rendered dynamically -->
+                </div>
+                <div class="flex-1 flex">
+                  <!-- Row Labels Left (N..1) -->
+                  <div id="board-row-labels" class="grid pr-1.5 text-right font-mono text-xs font-bold text-on-surface-variant justify-center items-center">
+                    <!-- Rendered dynamically -->
+                  </div>
+                  <!-- The NxN Grid Canvas -->
+                  <div class="flex-1 grid border-2 border-outline relative bg-surface-container-low select-none" id="board-matrix">
+                    <!-- Rendered dynamically by BoardRenderer -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- Interactive Legend Bar Below Board -->
+              <div class="w-full mt-4 pt-3 border-t-2 border-outline grid grid-cols-3 sm:grid-cols-6 gap-2 text-[11px] font-mono">
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-primary-fixed border border-outline flex items-center justify-center text-[10px] font-serif font-bold">♛</span>
+                  <span>Queen</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-tertiary-container border border-outline flex items-center justify-center text-[10px] text-tertiary font-bold">⚿</span>
+                  <span>Locked</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-secondary-fixed border border-secondary flex items-center justify-center text-[9px] text-secondary font-bold">✕</span>
+                  <span>Hole</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-surface-dim border border-outline flex items-center justify-center text-[9px]">▧</span>
+                  <span>Wall</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-secondary/20 border border-secondary/40 flex items-center justify-center">
+                    <span class="w-1.5 h-1.5 bg-secondary rounded-full"></span>
+                  </span>
+                  <span>Ray Attack</span>
+                </div>
+                <div class="flex items-center gap-1.5">
+                  <span class="w-4 h-4 bg-surface-container-lowest border border-outline flex items-center justify-center">
+                    <span class="w-1.5 h-1.5 bg-[#10b981] rounded-full"></span>
+                  </span>
+                  <span>Safe Spot</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quick Shortcuts Bar -->
+            <div class="bg-surface-container-high border-2 border-outline p-2.5 flex items-center justify-between text-xs font-mono">
+              <span class="text-on-surface-variant font-bold uppercase">PROJECTION VISIBILITY:</span>
+              <div class="flex items-center gap-4">
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input id="chk-sightlines" checked class="accent-primary cursor-pointer" type="checkbox"/>
+                  <span class="font-bold text-[11px]">Show Threat Sightlines</span>
+                </label>
+                <label class="flex items-center gap-1.5 cursor-pointer">
+                  <input id="chk-wall-occlusion" checked class="accent-primary cursor-pointer" type="checkbox"/>
+                  <span class="font-bold text-[11px]">Wall Occlusion Filter</span>
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- COLUMN 3: EXECUTION CONTROLLER & SOLUTIONS -->
+          <div class="xl:col-span-4 space-y-5">
+            <!-- Execution Controller & Live Step Inspector -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">play_circle</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Execution Pipeline</span>
+                </div>
+                <span class="px-2 py-0.5 bg-surface-container border border-outline font-mono text-xs font-bold text-on-surface flex items-center gap-1.5" id="engine-status-badge">
+                  <span class="w-2 h-2 rounded-full bg-primary-fixed"></span>IDLE / READY
+                </span>
+              </div>
+              
+              <!-- Primary Action Trigger & Playback Controls -->
+              <div class="space-y-3">
+                <div class="grid grid-cols-4 gap-2">
+                  <button class="col-span-2 py-3 bg-primary text-on-primary font-headline text-xs font-bold uppercase tracking-wider hover:bg-primary-fixed hover:text-on-primary-container border-2 border-outline shadow-[3px_3px_0px_#1a1a1a] transition-none flex items-center justify-center gap-2 active:translate-x-0.5 active:translate-y-0.5" id="btn-run">
+                    <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+                    <span id="run-text">Run Solver</span>
+                  </button>
+                  <button class="py-3 bg-surface-container-high font-label text-xs uppercase font-bold border-2 border-outline hover:bg-surface-container shadow-[2px_2px_0px_#1a1a1a] active:translate-x-0.5 active:translate-y-0.5 flex items-center justify-center gap-1" id="btn-step" title="Single step forward">
+                    <span class="material-symbols-outlined text-[16px]">skip_next</span>
+                    <span>Step</span>
+                  </button>
+                  <button class="py-3 bg-secondary-fixed font-label text-xs uppercase font-bold text-secondary border-2 border-outline hover:bg-secondary hover:text-on-primary shadow-[2px_2px_0px_#1a1a1a] active:translate-x-0.5 active:translate-y-0.5 flex items-center justify-center gap-1" id="btn-stop">
+                    <span class="material-symbols-outlined text-[16px]">stop</span>
+                    <span>Stop</span>
+                  </button>
+                </div>
+
+                <!-- Speed Slider & Debug Mode Toggle -->
+                <div class="p-3 bg-surface-container-low border border-outline space-y-2">
+                  <div class="flex items-center justify-between text-xs font-mono">
+                    <span class="font-bold uppercase text-on-surface-variant">Step Delay:</span>
+                    <span class="font-bold" id="speed-label">50 ms (Normal)</span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-[10px] font-mono font-bold">200ms</span>
+                    <input class="w-full accent-primary cursor-pointer h-1.5 bg-surface-container-highest" id="speed-slider" max="4" min="1" step="1" type="range" value="2"/>
+                    <span class="text-[10px] font-mono font-bold">0ms</span>
+                  </div>
+                  <div class="flex items-center justify-between pt-1 border-t border-outline/30 text-xs font-mono">
+                    <span class="text-on-surface-variant font-bold">DEBUG_EVENTS:</span>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input checked class="sr-only peer" id="debug-toggle" type="checkbox"/>
+                      <div class="w-8 h-4 bg-surface-container-highest peer-focus:outline-none border border-outline peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-primary after:border-outline after:border after:h-3 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Live Step Stream / Event Log Terminal -->
+                <div id="log-terminal" class="border-2 border-outline bg-primary text-on-primary p-3 font-mono text-[11px] h-36 overflow-y-auto space-y-1.5 leading-snug">
+                  <div class="text-[#10b981]">&gt; [KERNEL_INIT] Search tree initialized for N=8</div>
+                  <div class="text-surface-dim">&gt; Ready to execute solver. Press "Run Solver" to begin.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Results Metrics & Solution Browser -->
+            <div class="bg-surface-container-lowest border-2 border-outline shadow-[4px_4px_0px_#1a1a1a] p-4">
+              <div class="flex items-center justify-between pb-3 border-b-2 border-outline mb-3">
+                <div class="flex items-center gap-2">
+                  <span class="material-symbols-outlined text-[18px]">query_stats</span>
+                  <span class="font-headline font-bold text-xs uppercase tracking-wider">Solution Metrics</span>
+                </div>
+                <span class="px-1.5 py-0.5 bg-primary-container border border-outline text-[10px] font-mono font-bold">REAL-TIME</span>
+              </div>
+              
+              <!-- 4-Stat Bento Grid -->
+              <div class="grid grid-cols-2 gap-2 mb-4">
+                <div class="p-2.5 bg-surface-container-low border border-outline">
+                  <div class="text-[10px] font-mono text-on-surface-variant uppercase font-bold">TOTAL SOLUTIONS</div>
+                  <div class="text-2xl font-headline font-bold text-on-surface tracking-tight" id="metric-solutions">0</div>
+                  <div class="text-[9px] font-mono text-on-surface-variant">VERIFIED SOLS</div>
+                </div>
+                <div class="p-2.5 bg-surface-container-low border border-outline">
+                  <div class="text-[10px] font-mono text-on-surface-variant uppercase font-bold">SEARCH TIME</div>
+                  <div class="text-2xl font-headline font-bold text-on-surface tracking-tight" id="metric-time">0 <span class="text-xs font-mono">ms</span></div>
+                  <div class="text-[9px] font-mono text-[#10b981] font-bold">WORKER CPU</div>
+                </div>
+                <div class="p-2.5 bg-surface-container-low border border-outline">
+                  <div class="text-[10px] font-mono text-on-surface-variant uppercase font-bold">NODES EXPLORED</div>
+                  <div class="text-lg font-headline font-bold text-on-surface tracking-tight" id="metric-nodes">0</div>
+                  <div class="text-[9px] font-mono text-on-surface-variant">SEARCH TREE</div>
+                </div>
+                <div class="p-2.5 bg-surface-container-low border border-outline">
+                  <div class="text-[10px] font-mono text-on-surface-variant uppercase font-bold">HEAP ALLOC</div>
+                  <div class="text-lg font-headline font-bold text-on-surface tracking-tight" id="metric-mem">1.4 <span class="text-xs font-mono">MB</span></div>
+                  <div class="text-[9px] font-mono text-on-surface-variant">STACK FRAMES</div>
+                </div>
+              </div>
+
+              <!-- Solution Carousel & Mini Thumbnail Inspector -->
+              <div class="p-3 bg-surface-container border border-outline space-y-3">
+                <div class="flex items-center justify-between">
+                  <div class="font-headline font-bold text-xs uppercase text-on-surface flex items-center gap-1.5">
+                    <span>Solution Navigator</span>
+                    <span class="px-1.5 py-0.2 bg-primary text-on-primary font-mono text-[10px]" id="sol-index-badge">#0 / 0</span>
+                  </div>
+                  <div class="flex items-center gap-1">
+                    <button id="btn-prev-sol" class="w-6 h-6 border border-outline bg-surface-container-lowest hover:bg-primary hover:text-on-primary flex items-center justify-center font-bold text-xs shadow-[1px_1px_0px_#1a1a1a]">&lt;</button>
+                    <button id="btn-next-sol" class="w-6 h-6 border border-outline bg-surface-container-lowest hover:bg-primary hover:text-on-primary flex items-center justify-center font-bold text-xs shadow-[1px_1px_0px_#1a1a1a]">&gt;</button>
+                  </div>
+                </div>
+                
+                <div class="flex items-center gap-3">
+                  <!-- Mini Thumbnail Preview -->
+                  <div id="mini-thumbnail" class="w-20 h-20 bg-surface-container-lowest border-2 border-outline grid p-0.5 shrink-0">
+                    <!-- Rendered by SolutionBrowser -->
+                  </div>
+                  <!-- State Vector -->
+                  <div class="flex-1 space-y-1 text-xs font-mono">
+                    <div class="text-[10px] text-on-surface-variant font-bold">STATE VECTOR:</div>
+                    <div id="vector-text" class="p-1.5 bg-surface-container-lowest border border-outline font-bold truncate text-[11px]">
+                      []
+                    </div>
+                    <div class="text-[10px] text-on-surface-variant">INTERACTIVE PREVIEW</div>
+                  </div>
+                </div>
+
+                <!-- Export Action Buttons -->
+                <div class="grid grid-cols-2 gap-2 pt-1 border-t border-outline/30">
+                  <button id="btn-copy-vector" class="px-2 py-1.5 bg-surface-container-lowest border border-outline hover:bg-primary hover:text-on-primary text-[10px] font-mono uppercase font-bold flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1a1a1a]">
+                    <span class="material-symbols-outlined text-[13px]">content_copy</span>
+                    <span>Copy Vector</span>
+                  </button>
+                  <button id="btn-export-json" class="px-2 py-1.5 bg-surface-container-lowest border border-outline hover:bg-primary hover:text-on-primary text-[10px] font-mono uppercase font-bold flex items-center justify-center gap-1 shadow-[1px_1px_0px_#1a1a1a]">
+                    <span class="material-symbols-outlined text-[13px]">download</span>
+                    <span>Export JSON</span>
+                  </button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- TAB 2: ALGORITHM COMPARISON & BENCHMARK RUNNER -->
+      <div id="view-comparison" class="hidden w-full">
+        <div id="comparison-container">
+          <!-- Rendered by ComparisonPanel -->
+        </div>
+      </div>
+
+      <!-- TAB 3: DOCS & ARCHITECTURE -->
+      <div id="view-docs" class="hidden w-full">
+        <div id="docs-container">
+          <!-- Rendered by DocsPanel -->
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Bottom Status Footer -->
+    <footer class="h-10 bg-surface-container border-t-2 border-outline px-8 flex items-center justify-between text-xs font-mono text-on-surface-variant">
+      <div>Engine: WebAssembly C++ Ready (Web Worker Active)</div>
+      <div class="flex items-center gap-4">
+        <span>WORKER: ACTIVE</span>
+        <span>FPS: 60</span>
+        <span class="flex items-center gap-1.5 text-on-surface font-bold">
+          <span class="w-2 h-2 rounded-full bg-[#10b981]"></span>ENGINE READY
+        </span>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/app.ts"></script>
+</body>
+</html>
